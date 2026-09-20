@@ -217,9 +217,15 @@ const login = async (req, res) => {
 
         console.log("USER PASSWORD EXISTS:", !!user.password);
 
-        const passmatch = await bcrypt.compare(password, user.password);
+    if (!user.password) {
+        return res.status(400).json({
+            message: "This account uses Google login"
+    });
+}
 
-        console.log("PASSWORD MATCH:", passmatch);
+const passmatch = await bcrypt.compare(password, user.password);
+
+console.log("PASSWORD MATCH:", passmatch);
 
         if (!passmatch) {
             return res.status(400).json({
