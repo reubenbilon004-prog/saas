@@ -15,6 +15,7 @@ const oauth2Client = new google.auth.OAuth2(
 const googleLogin = (req,res)=>{
     const authUrl = oauth2Client.generateAuthUrl({
         access_type: "offline",
+        prompt:"select_account",
         scope:[
             "openid",
             "profile",
