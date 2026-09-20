@@ -309,7 +309,7 @@ const refresh = async(req,res)=>{
         // Replace the old refresh token cookie with the new one
         res.cookie("refreshToken",newRefreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "Production",
+            secure: process.env.NODE_ENV === "production",
             sameSite: "strict"
         });
 
