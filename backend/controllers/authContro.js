@@ -42,7 +42,7 @@ const register = async (req,res)=>{
         await user.save();
 
         const verificationLink = 
-        `http://localhost:3000/api/auth/verify-email?token=${verificationToken}`;
+        `${process.env.BACKEND_URL}/api/auth/verify-email?token=${verificationToken}`;
 
         await transpoter.sendMail({
             from: process.env.EMAIL_USER,
