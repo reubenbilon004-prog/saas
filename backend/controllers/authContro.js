@@ -195,35 +195,60 @@ const resetPassword = async(req,res)=>{
     }
 };
 
-const login =async (req,res)=>{
-    try{
-        const {email,password} = req.body;
+const login = async (req, res) => {
+    try {
+        console.log("LOGIN START");
+        console.log("BODY:", req.body);
 
-        const user = await User.findOne({email});
-        if(!user){
+        const { email, password } = req.body;
+
+        console.log("EMAIL:", email);
+        console.log("PASSWORD RECEIVED:", !!password);
+
+        const user = await User.findOne({ email });
+
+        console.log("USER FOUND:", !!user);
+
+        if (!user) {
             return res.status(400).json({
                 message: "Invalid user or password"
             });
         }
-        const passmatch = await bcrypt.compare(password,user.password);
-        if(!passmatch){
+
+        console.log("USER PASSWORD EXISTS:", !!user.password);
+
+        const passmatch = await bcrypt.compare(password, user.password);
+
+        console.log("PASSWORD MATCH:", passmatch);
+
+        if (!passmatch) {
             return res.status(400).json({
-                message: "Invalid passowrd"
+                message: "Invalid password"
             });
         }
-        if(!user.isVerified){
+
+        console.log("USER VERIFIED:", user.isVerified);
+
+        if (!user.isVerified) {
             return res.status(403).json({
-                message: "Please verify your email before loggin in"
+                message: "Please verify your email before logging in"
             });
         }
+
+        console.log("CREATING ACCESS TOKEN");
+
         const accessToken = jwt.sign(
             {
-            userId: user._id,
-            role: user.role
-        },
-        process.env.JWT_SECRET,
-        {expiresIn: "15m"}
+                userId: user._id,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "15m"
+            }
         );
+
+        console.log("ACCESS TOKEN CREATED");
 
         const refreshToken = jwt.sign(
             {
@@ -234,24 +259,40 @@ const login =async (req,res)=>{
                 expiresIn: "2d"
             }
         );
+
+        console.log("REFRESH TOKEN CREATED");
+
         await Session.create({
-            userId:user._id,
-            refreshToken:refreshToken,
-            expiresAt:new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+            userId: user._id,
+            refreshToken: refreshToken,
+            expiresAt: new Date(
+                Date.now() + 2 * 24 * 60 * 60 * 1000
+            )
         });
-        res.cookie("refreshToken", refreshToken,{
+
+        console.log("SESSION CREATED");
+
+        res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict"
+            sameSite: process.env.NODE_ENV === "production"
+                ? "none"
+                : "strict"
         });
+
+        console.log("COOKIE SET");
+
         res.status(200).json({
             message: "Login successful",
             accessToken
         });
-    }catch(error){
+
+    } catch (error) {
         console.log("LOGIN ERROR:", error);
+
         res.status(500).json({
-            message: "server error"
+            message: "Server error",
+            error: error.message
         });
     }
 };
