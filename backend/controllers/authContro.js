@@ -249,6 +249,7 @@ const login =async (req,res)=>{
             accessToken
         });
     }catch(error){
+        console.log("LOGIN ERROR:", error);
         res.status(500).json({
             message: "server error"
         });
