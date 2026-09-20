@@ -11,6 +11,12 @@ const subscriptionRoutes = require("./routes/subscription");
 const rateLimit = require("express-rate-limit");
 
 const app = express();
+
+app.use((req, res, next) => {
+    console.log("REQUEST:", req.method, req.url);
+    next();
+});
+
 app.set("trust proxy", 1);
 app.use(cors({
     origin: process.env.FRONTEND_URL,
