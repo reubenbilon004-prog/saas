@@ -12,7 +12,7 @@ const rateLimit = require("express-rate-limit");
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials:true
 }));
 const authLimit = rateLimit({

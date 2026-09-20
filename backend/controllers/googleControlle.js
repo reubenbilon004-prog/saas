@@ -8,7 +8,7 @@ const Session = require("../models/Session");
 const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    "http://localhost:3000/api/auth/google/callback"
+    process.env.GOOGLE_REDIRECT_URI
 
 );
 
@@ -83,7 +83,7 @@ const googleCallback = async (req,res) =>{
             sameSite: "strict"
         });
         res.redirect(
-            `http://localhost:5173/dashboard?token=${accessToken}`
+            `${process.env.FRONTEND_URL}/dashboard?token=${accessToken}`
         );
     }catch(error){
         console.log(error);
