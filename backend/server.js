@@ -25,10 +25,12 @@ app.use(cors({
 const authLimit = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
-    message:{
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
         message: "Too many requests, please try again later"
     }
-}) ;
+});
 
 app.use(express.json());
 app.use(cookieParser());
